@@ -1,0 +1,278 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Spin the Bottle</title>
+  </head>
+
+  <body class="background">
+    <div class="leftBar">
+      <img onclick="myMenu()" class="dropdown-button" src="img/Screenshot_6.png">
+      <div id="dropDownContent" class="dropdown-content" onclick="switchBottle(), switchWallPaper()">
+        <img src="img/beer.svg" class="dropDownFlasche">
+        <img src="img/whiskey.svg" class="dropDownFlasche">
+        <img src="img/ghty.png" class="dropDownFlasche">
+        
+        
+        
+      </div>
+    </div>
+
+    <div class="flasche flascheAnime" style="transform: rotate(3221.68deg);">
+      <img onclick="turnBottle()" id="flasche" src="img/beer.svg">
+    
+    </div>
+  
+    <div class="rightBar">
+        <img src="img/Screenshot_7.png" class="fullscreenButton" onclick="toggleFullScreen()">
+    </div>
+
+
+
+<style>
+  .background{
+    background-color: white;
+    background-repeat:no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+	  height: 100vh;
+  }
+
+  [data-settings] {
+    cursor: pointer;
+    background: var(--grey-btn-bg);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgdmlld0JveD0iMCAwIDE0IDE0Ij48cGF0aCBmaWxsPSIjNWU2Mzc0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03LjAyLjBjLjU4LjAgMS4wNi40NCAxLjEyIDFWMi4wN2MuNTguMTMgMS4xMS4zNSAxLjU5LjY2bC42NC0uNjRhMS4xMiAxLjEyLjAgMDExLjU5IDEuNTlsLS42NS42NGMuMy40OC41MyAxLjAxLjY1IDEuNThoLjkyQTEuMTIgMS4xMi4wIDAxMTMgOC4xNGgtMS4wNWE1LjAzIDUuMDMuMCAwMS0uNjUgMS41N2wuNjYuNjZhMS4xMiAxLjEyLjAgMDEtMS41IDEuNjdsLS4xLS4wOC0uNjYtLjY3Yy0uNDcuMy0xIC41MS0xLjU1LjY0di45NUExLjEyIDEuMTIuMCAwMTUuOSAxM2wtLjAxLS4xMnYtLjk1YTUuMDMgNS4wMy4wIDAxLTEuNTUtLjY0bC0uNy43YTEuMTIgMS4xMi4wIDAxLTEuNjgtMS41bC4wOS0uMDkuNy0uN2MtLjMtLjQ3LS41My0xLS42Ni0xLjU1aC0uOThBMS4xMiAxLjEyLjAgMDExIDUuOWwuMTItLjAxaC45N2MuMTItLjU3LjM0LTEuMS42NC0xLjU4bC0uNjctLjY3YTEuMTIgMS4xMi4wIDAxMS40OS0xLjY4bC4xLjA5LjY3LjY3Yy40OC0uMyAxLjAxLS41MyAxLjU4LS42NnYtLjk1QzUuOS41IDYuNC4wIDcuMDIuMHptMCA0LjE5YTIuODEgMi44MS4wIDEwMS45MiA0Ljg2TDkgOWwuMDctLjA2Yy40NC0uNDUuNzItMS4wNi43Ny0xLjczYTIuOCAyLjguMCAwMC0uNjQtMiAxLjA1IDEuMDUuMCAwMS0uMzYtLjM1IDIuOCAyLjguMCAwMC0xLjgtLjY2eiIvPjwvc3ZnPg==)
+}
+
+
+
+  /* The container <div> - needed to position the dropdown content */
+  .leftBar {
+    position: relative;
+    margin-right: 0px;
+    margin-left: 30px;
+  }
+
+  .dropdown-button {
+    cursor: pointer;
+    opacity: 66%;
+    max-width: 66px;
+  }
+
+  .dropdown-button:hover, .dropdown-button:focus, .fullscreenButton:hover, .fullscreenButton:focus{
+    opacity: 100%;
+  }
+
+  .dropdown-button:active, .fullscreenButton:active{
+    cursor: pointer;
+    opacity: 100%;
+    transform: translateY(4px);
+  }
+
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    background-color: white;
+    background-blend-mode: darken;
+    display: none;
+    position: absolute;
+    min-width: 400px;
+    z-index: 1;
+    padding: -50px;
+  }
+
+  /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+  .show {display:block;}
+
+  .flasche{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    height: 66%;
+    width: 66%;
+    margin-top: 100px;
+  }
+
+  @keyframes flascheKeyFrames {
+      from {left:260px; top:0px;}
+      to {left:0px; top:0px;}
+    }
+  .flascheAnime{
+    animation-name: flascheKeyFrames;
+    animation-duration: 2s;
+  }
+
+  .dropDownFlasche {
+    max-height: 180px;
+    max-width: auto;
+    justify-self : center;
+    margin-top: 30px;
+  }
+  .dropDownWallPaper {
+    max-height: 90px;
+    max-width: auto;
+    margin-top: 30px;
+    justify-self : center;
+  }
+  .rightBar{
+    position: relative;
+    margin-left: 0px;
+    margin-right: 30px;
+
+  }
+
+.top-controls>[data-settings] {
+    height: 36px;
+    width: 36px;
+    border-radius: 18px;
+}
+
+  .fullscreenButton {
+    cursor: pointer;
+    opacity: 66%;
+    max-width: 66px;
+  }
+
+</style>
+
+<script type="text/javascript" charset="utf-8">
+  // Hides mobile browser's address bar when page is done loading.
+    window.addEventListener('load', function(e) {
+      setTimeout(function() { window.scrollTo(0, 1); }, 1);
+    }, false);
+
+    function toggleFullScreen() {
+    var doc = window.document;
+    var docEl = doc.documentElement;
+
+    var requestFullScreen =
+      docEl.requestFullscreen ||
+      docEl.mozRequestFullScreen ||
+      docEl.webkitRequestFullScreen ||
+      docEl.msRequestFullscreen;
+    var cancelFullScreen =
+      doc.exitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen ||
+      doc.msExitFullscreen;
+
+    if (
+      !doc.fullscreenElement &&
+      !doc.mozFullScreenElement &&
+      !doc.webkitFullscreenElement &&
+      !doc.msFullscreenElement
+    ) {
+      requestFullScreen.call(docEl);
+    } else {
+      cancelFullScreen.call(doc);
+    }
+  }
+
+  function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
+  var spinning = 0;
+  var stopSpinning = 0;
+
+  async function turnBottle(){
+    spinning ++;
+    console.log("spinning:" + spinning);
+    if ( typeof turnBottle.winkelPre == 'undefined' ){
+      turnBottle.winkelPre = 0;
+    }
+    else{
+      turnBottle.winkelPre = turnBottle.winkel;
+    }
+    turnBottle.winkel = Math.random() * 360;
+    let winkelStr = turnBottle.winkel.toString() + 'deg';
+    let winkelStepped = turnBottle.winkel;
+
+    let i = 1;
+    let loops = 500;
+    while (winkelStepped <= turnBottle.winkel || i<loops && spinning==1) {
+      let winkelNextStr = winkelStepped.toString() + 'deg';
+      document.getElementsByClassName("flasche")[0].style.cssText =  'transform: rotate('+winkelNextStr+');';
+      winkelStepped = winkelStepped + (loops-i)/i;
+      i++;
+      await delay(10);
+      if(stopSpinning==1){
+        stopSpinning=0;
+        break;
+      }
+    }
+    stopSpinning = 0;
+    spinning--;
+    console.log("spinning:" + spinning);
+    console.log("i:" + i);
+
+  }
+  /* When the user clicks on the button,
+  toggle between hiding and showing the dropdown content */
+  function myMenu() {
+    document.getElementById("dropDownContent").classList.toggle("show");
+  }
+
+  // Close the dropdown menu if the user clicks outside of it
+  window.onclick = function(event) {
+    console.log("onClick...");
+    if (!event.target.matches('.dropdown-button')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      console.log("daneben");
+      for (i = 0; i < dropdowns.length; i++) {
+        console.log("daneben i:" + i);
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+
+  function play() {
+    console.log("play..");
+    document.querySelector(".flasche").style.cssText =  'transform: rotate(0deg);';
+    document.querySelector(".flasche").className = "flasche";
+    window.requestAnimationFrame(function(time) {
+      window.requestAnimationFrame(function(time) {
+        document.querySelector(".flasche").className = "flasche flascheAnime";
+      });
+    });
+  }
+
+  function switchBottle() {
+    console.log("switchBottle..");
+    if(spinning>0){
+      stopSpinning = 1;
+    }
+    if (event.target.matches('.dropDownFlasche')) {
+      const element = document.getElementById('flasche')
+      element.src=event.target.src;
+      play();
+    }
+    document.getElementById("dropDownContent").classList.toggle("show");
+  }
+
+  function switchWallPaper() {
+    console.log("switchWP..");
+    if(spinning>0){
+      stopSpinning = 1;
+    }
+    if (event.target.matches('.dropDownWallPaper')) {
+      console.log("matchWP..");
+      console.log("src:" + event.target.src);
+      document.querySelector(".background").style.cssText ='background-image: url('+ event.target.src + ');';
+      play();
+    }
+    document.getElementById("dropDownContent").classList.toggle("show");
+  }
+
+</script>
+</body></html>
