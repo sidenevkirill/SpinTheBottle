@@ -52,8 +52,6 @@
 }
 
 
-
-  /* The container <div> - needed to position the dropdown content */
   .leftBar {
     position: relative;
     margin-right: 0px;
@@ -62,8 +60,8 @@
 
   .dropdown-button {
     cursor: pointer;
-    opacity: 66%;
-    max-width: 66px;
+    opacity: 76%;
+    max-width: 76px;
   }
 
   .dropdown-button:hover, .dropdown-button:focus, .fullscreenButton:hover, .fullscreenButton:focus{
@@ -87,15 +85,14 @@
     padding: -50px;
   }
 
-  /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
   .show {display:block;}
 
   .flasche{
     display: flex;
     position: relative;
     justify-content: center;
-    height: 56%;
-    width: 56%;
+    height: 66%;
+    width: 66%;
     margin-top: 100px;
   }
 
@@ -103,6 +100,7 @@
       from {left:260px; top:0px;}
       to {left:0px; top:0px;}
     }
+	
   .flascheAnime{
     animation-name: flascheKeyFrames;
     animation-duration: 2s;
@@ -142,7 +140,7 @@
 </style>
 
 <script type="text/javascript" charset="utf-8">
-  // Hides mobile browser's address bar when page is done loading.
+
     window.addEventListener('load', function(e) {
       setTimeout(function() { window.scrollTo(0, 1); }, 1);
     }, false);
@@ -213,8 +211,7 @@
     console.log("i:" + i);
 
   }
-  /* When the user clicks on the button,
-  toggle between hiding and showing the dropdown content */
+
   function myMenu() {
     document.getElementById("dropDownContent").classList.toggle("show");
   }
