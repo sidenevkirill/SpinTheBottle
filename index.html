@@ -8,267 +8,1219 @@
     <title>Spin the Bottle</title>
   </head>
 
-  <body class="background">
-    <div class="leftBar">
-      <img onclick="myMenu()" class="dropdown-button" src="img/Screenshot_6.png">
-      <div id="dropDownContent" class="dropdown-content" onclick="switchBottle(), switchWallPaper()">
-        <img src="img/beer.svg" class="dropDownFlasche">
-        <img src="img/whiskey.svg" class="dropDownFlasche">
-        <img src="img/ghty.png" class="dropDownFlasche">
-        
-        
-        
+  <body class="background light-theme">
+    <!-- Верхняя панель управления -->
+    <div class="top-controls">
+      <div class="control-group left-controls">
+        <div class="bottle-selector" onclick="myMenu()">
+          <span class="bottle-icon">🍾</span>
+        </div>
+        <div class="players-selector" onclick="showPlayersModal()">
+          <span class="players-icon">👥</span>
+        </div>
+        <div class="stats-selector" onclick="showStatsModal()">
+          <span class="stats-icon">📊</span>
+        </div>
+      </div>
+      
+      <div class="control-group center-controls">
+        <div class="game-title">Spin the Bottle</div>
+        <div class="current-player" id="currentPlayerDisplay">Нажмите для старта!</div>
+      </div>
+      
+      <div class="control-group right-controls">
+        <div class="sound-toggle" onclick="toggleSound()">
+          <span class="sound-icon" id="soundIcon">🔊</span>
+        </div>
+        <div class="theme-toggle" onclick="toggleTheme()">
+          <span class="theme-icon">🌙</span>
+        </div>
+        <div class="fullscreen-toggle" onclick="toggleFullScreen()">
+          <span class="fullscreen-icon">⛶</span>
+        </div>
       </div>
     </div>
 
-    <div class="flasche flascheAnime" style="transform: rotate(3221.68deg);">
-      <img onclick="turnBottle()" id="flasche" src="img/beer.svg">
-    
-    </div>
-  
-    <div class="rightBar">
-        <img src="img/Screenshot_7.png" class="fullscreenButton" onclick="toggleFullScreen()">
+    <!-- Выпадающее меню -->
+    <div id="dropDownContent" class="dropdown-content" onclick="switchBottle()">
+      <div class="dropdown-header">Выберите бутылку</div>
+      <div class="bottle-options">
+        <img src="img/beer.svg" class="dropDownFlasche">
+        <img src="img/whiskey.svg" class="dropDownFlasche">
+        <img src="img/ghty.png" class="dropDownFlasche">
+      </div>
     </div>
 
+    <!-- Модальное окно игроков -->
+    <div id="playersModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Добавьте игроков</h2>
+          <span class="close" onclick="closePlayersModal()">&times;</span>
+        </div>
+        <div class="players-input-container">
+          <input type="text" id="playerInput" placeholder="Введите имя игрока" maxlength="20">
+          <button onclick="addPlayer()" class="add-player-btn">Добавить</button>
+        </div>
+        <div class="players-list" id="playersList">
+          <div style="text-align: center; color: var(--text-color); opacity: 0.7;">Добавьте игроков для начала игры</div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="startGame()" class="start-game-btn">Начать игру</button>
+          <button onclick="closePlayersModal()" class="cancel-btn">Отмена</button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Модальное окно статистики -->
+    <div id="statsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Статистика игры</h2>
+          <span class="close" onclick="closeStatsModal()">&times;</span>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-label">Всего вращений:</span>
+            <span class="stat-value" id="totalSpins">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Средний угол:</span>
+            <span class="stat-value" id="averageRotation">0°</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Любимая бутылка:</span>
+            <span class="stat-value" id="favoriteBottle">-</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Сегодня вращений:</span>
+            <span class="stat-value" id="todaySpins">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Рекорд угла:</span>
+            <span class="stat-value" id="maxRotation">0°</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="resetStats()" class="reset-stats-btn">Сбросить статистику</button>
+          <button onclick="closeStatsModal()" class="cancel-btn">Закрыть</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основная игровая зона -->
+    <div class="game-area">
+      <div class="flasche flascheAnime" style="transform: rotate(3221.68deg);">
+        <img onclick="turnBottle()" id="flasche" src="img/beer.svg">
+      </div>
+    </div>
+
+    <!-- Контейнер для частиц -->
+    <div id="particlesContainer"></div>
+
+    <!-- Аудио элементы -->
+    <audio id="spinSound" preload="auto">
+      <source src="sound/spin-sound.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="stopSound" preload="auto">
+      <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound" preload="auto">
+      <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="celebrationSound" preload="auto">
+      <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
 
 <style>
+  :root {
+    --bg-color: white;
+    --text-color: #333;
+    --dropdown-bg: white;
+    --dropdown-border: #ccc;
+    --control-bg: rgba(255, 255, 255, 0.95);
+    --control-border: rgba(0,0,0,0.1);
+    --shadow-color: rgba(0,0,0,0.1);
+    --accent-color: #4a90e2;
+  }
+
+  .dark-theme {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --dropdown-bg: #2d2d2d;
+    --dropdown-border: #444;
+    --control-bg: rgba(45, 45, 45, 0.95);
+    --control-border: rgba(255,255,255,0.1);
+    --shadow-color: rgba(255,255,255,0.1);
+    --accent-color: #64b5f6;
+  }
+
+  .light-theme {
+    --bg-color: white;
+    --text-color: #333;
+    --dropdown-bg: white;
+    --dropdown-border: #ccc;
+    --control-bg: rgba(255, 255, 255, 0.95);
+    --control-border: rgba(0,0,0,0.1);
+    --shadow-color: rgba(0,0,0,0.1);
+    --accent-color: #4a90e2;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
   .background{
-    background-color: white;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     background-repeat:no-repeat;
     background-position: center;
     display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: all 0.3s ease;
+  }
+
+  /* Верхняя панель управления */
+  .top-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--control-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--control-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  /* Кнопки управления */
+  .bottle-selector, .players-selector, .stats-selector {
+    background: var(--accent-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    border: none;
+    opacity: 1;
+    transition: all 0.3s ease;
+    min-width: 120px;
     justify-content: center;
-	  height: 100vh;
   }
 
-  [data-settings] {
+  .players-selector {
+    background: #ffa502;
+    box-shadow: 0 4px 15px rgba(255, 165, 2, 0.3);
+  }
+
+  .stats-selector {
+    background: #8e44ad;
+    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+  }
+
+  .bottle-selector:hover, .players-selector:hover, .stats-selector:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+  }
+
+  .bottle-selector:active, .players-selector:active, .stats-selector:active {
+    transform: translateY(0);
+  }
+
+  .bottle-icon, .players-icon, .stats-icon {
+    font-size: 20px;
+  }
+
+  /* Заголовок игры */
+  .game-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-shadow: 0 2px 4px var(--shadow-color);
+  }
+
+  .current-player {
+    font-size: 16px;
+    color: var(--accent-color);
+    font-weight: 600;
+    text-shadow: 0 2px 4px var(--shadow-color);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+  }
+
+  /* Кнопки справа */
+  .theme-toggle, .fullscreen-toggle, .sound-toggle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--control-bg);
+    border: 2px solid var(--control-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    background: var(--grey-btn-bg);
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgdmlld0JveD0iMCAwIDE0IDE0Ij48cGF0aCBmaWxsPSIjNWU2Mzc0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03LjAyLjBjLjU4LjAgMS4wNi40NCAxLjEyIDFWMi4wN2MuNTguMTMgMS4xMS4zNSAxLjU5LjY2bC42NC0uNjRhMS4xMiAxLjEyLjAgMDExLjU5IDEuNTlsLS42NS42NGMuMy40OC41MyAxLjAxLjY1IDEuNThoLjkyQTEuMTIgMS4xMi4wIDAxMTMgOC4xNGgtMS4wNWE1LjAzIDUuMDMuMCAwMS0uNjUgMS41N2wuNjYuNjZhMS4xMiAxLjEyLjAgMDEtMS41IDEuNjdsLS4xLS4wOC0uNjYtLjY3Yy0uNDcuMy0xIC41MS0xLjU1LjY0di45NUExLjEyIDEuMTIuMCAwMTUuOSAxM2wtLjAxLS4xMnYtLjk1YTUuMDMgNS4wMy4wIDAxLTEuNTUtLjY0bC0uNy43YTEuMTIgMS4xMi4wIDAxLTEuNjgtMS41bC4wOS0uMDkuNy0uN2MtLjMtLjQ3LS41My0xLS42Ni0xLjU1aC0uOThBMS4xMiAxLjEyLjAgMDExIDUuOWwuMTItLjAxaC45N2MuMTItLjU3LjM0LTEuMS42NC0xLjU4bC0uNjctLjY3YTEuMTIgMS4xMi4wIDAxMS40OS0xLjY4bC4xLjA5LjY3LjY3Yy40OC0uMyAxLjAxLS41MyAxLjU4LS42NnYtLjk1QzUuOS41IDYuNC4wIDcuMDIuMHptMCA0LjE5YTIuODEgMi44MS4wIDEwMS45MiA0Ljg2TDkgOWwuMDctLjA2Yy40NC0uNDUuNzItMS4wNi43Ny0xLjczYTIuOCAyLjguMCAwMC0uNjQtMiAxLjA1IDEuMDUuMCAwMS0uMzYtLjM1IDIuOCAyLjguMCAwMC0xLjgtLjY2eiIvPjwvc3ZnPg==)
-}
-
-
-  .leftBar {
-    position: relative;
-    margin-right: 0px;
-    margin-left: 30px;
+    transition: all 0.3s ease;
+    opacity: 1;
+    box-shadow: 0 2px 10px var(--shadow-color);
   }
 
-  .dropdown-button {
-    cursor: pointer;
-    opacity: 76%;
-    max-width: 76px;
+  .theme-toggle:hover, .fullscreen-toggle:hover, .sound-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--accent-color);
   }
 
-  .dropdown-button:hover, .dropdown-button:focus, .fullscreenButton:hover, .fullscreenButton:focus{
-    opacity: 100%;
+  .theme-icon, .fullscreen-icon, .sound-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease;
   }
 
-  .dropdown-button:active, .fullscreenButton:active{
-    cursor: pointer;
-    opacity: 100%;
-    transform: translateY(4px);
+  .theme-toggle:hover .theme-icon {
+    transform: rotate(180deg);
   }
 
-  .dropdown-content {
-    background-color: white;
-    background-blend-mode: darken;
-    display: none;
-    position: absolute;
-    min-width: 400px;
-    z-index: 1;
-    padding: -50px;
+  .fullscreen-toggle:hover .fullscreen-icon {
+    transform: scale(1.2);
   }
 
-  .show {display:block;}
+  .sound-muted {
+    opacity: 0.5;
+  }
+
+  /* Игровая зона */
+  .game-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
+  }
 
   .flasche{
     display: flex;
     position: relative;
     justify-content: center;
-    height: 66%;
-    width: 66%;
-    margin-top: 100px;
+    height: 60%;
+    width: 60%;
+    filter: drop-shadow(0 0 30px var(--shadow-color));
+    transition: filter 0.3s ease;
   }
 
   @keyframes flascheKeyFrames {
-      from {left:260px; top:0px;}
-      to {left:0px; top:0px;}
+      from { 
+        transform: translateX(100px) rotate(0deg);
+        opacity: 0;
+      }
+      to { 
+        transform: translateX(0) rotate(0deg);
+        opacity: 1;
+      }
     }
-	
+  
   .flascheAnime{
     animation-name: flascheKeyFrames;
-    animation-duration: 2s;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+  }
+
+  /* Выпадающее меню */
+  .dropdown-content {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--dropdown-border);
+    box-shadow: 0 8px 30px var(--shadow-color);
+    display: none;
+    z-index: 999;
+    padding: 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    min-width: 300px;
+  }
+
+  .dropdown-content.show {
+    display: block;
+    animation: dropdownAppear 0.3s ease;
+  }
+
+  @keyframes dropdownAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  .bottle-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
   }
 
   .dropDownFlasche {
-    max-height: 180px;
+    max-height: 120px;
     max-width: auto;
-    justify-self : center;
-    margin-top: 30px;
-  }
-  .dropDownWallPaper {
-    max-height: 90px;
-    max-width: auto;
-    margin-top: 30px;
-    justify-self : center;
-  }
-  .rightBar{
-    position: relative;
-    margin-left: 0px;
-    margin-right: 30px;
-
-  }
-
-.top-controls>[data-settings] {
-    height: 36px;
-    width: 36px;
-    border-radius: 18px;
-}
-
-  .fullscreenButton {
     cursor: pointer;
-    opacity: 76%;
-    max-width: 76px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    padding: 10px;
+    background: var(--control-bg);
   }
 
+  .dropDownFlasche:hover {
+    transform: scale(1.15);
+    background: var(--accent-color);
+  }
+
+  /* Модальные окна */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background-color: var(--dropdown-bg);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+    border: 1px solid var(--dropdown-border);
+    animation: modalAppear 0.3s ease;
+  }
+
+  @keyframes modalAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8) translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--dropdown-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    color: var(--text-color);
+  }
+
+  .close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .close:hover {
+    color: var(--text-color);
+  }
+
+  .players-input-container {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  #playerInput {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid var(--dropdown-border);
+    border-radius: 10px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  #playerInput:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .add-player-btn, .start-game-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .add-player-btn:hover, .start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+  }
+
+  .players-list {
+    padding: 0 20px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background: var(--control-bg);
+    border-radius: 10px;
+    border: 1px solid var(--dropdown-border);
+  }
+
+  .player-name {
+    color: var(--text-color);
+    font-weight: 500;
+  }
+
+  .remove-player {
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .remove-player:hover {
+    transform: scale(1.1);
+    background: #ff3742;
+  }
+
+  .modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--dropdown-border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .cancel-btn {
+    background: var(--control-bg);
+    color: var(--text-color);
+    border: 1px solid var(--dropdown-border);
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .cancel-btn:hover {
+    background: var(--dropdown-border);
+  }
+
+  .reset-stats-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .reset-stats-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+  }
+
+  /* Статистика */
+  .stats-container {
+    padding: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--dropdown-border);
+  }
+
+  .stat-label {
+    color: var(--text-color);
+    font-weight: 500;
+  }
+
+  .stat-value {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  /* Анимация частиц */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    z-index: 9999;
+    animation: particleFloat 1.5s ease-out forwards;
+  }
+
+  @keyframes particleFloat {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--tx), var(--ty)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  .particle.emoji {
+    width: 24px;
+    height: 24px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 24px;
+    background: none !important;
+  }
+
+  .celebration-effect {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 0 0 20px rgba(255,215,0,0.8);
+    z-index: 10000;
+    animation: celebrationPop 2s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes celebrationPop {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.2);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+    }
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .top-controls {
+      height: 60px;
+      padding: 0 15px;
+    }
+    
+    .bottle-selector, .players-selector, .stats-selector {
+      padding: 10px 15px;
+      min-width: 100px;
+      font-size: 14px;
+    }
+    
+    .game-title {
+      font-size: 20px;
+    }
+    
+    .theme-toggle, .fullscreen-toggle, .sound-toggle {
+      width: 45px;
+      height: 45px;
+    }
+    
+    .dropdown-content {
+      min-width: 250px;
+      left: 15px;
+      top: 70px;
+    }
+
+    .players-input-container {
+      flex-direction: column;
+    }
+    
+    .modal-footer {
+      flex-direction: column;
+    }
+  }
+
+  /* Анимация переключения темы */
+  .theme-transition * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
 </style>
 
 <script type="text/javascript" charset="utf-8">
+    // Глобальные переменные
+    var spinning = 0;
+    var stopSpinning = 0;
+    var players = [];
+    var currentPlayerIndex = 0;
+    var soundEnabled = true;
+    var currentBottle = 'beer';
 
-    window.addEventListener('load', function(e) {
-      setTimeout(function() { window.scrollTo(0, 1); }, 1);
-    }, false);
+    // Статистика
+    const stats = JSON.parse(localStorage.getItem('bottleStats')) || {
+        totalSpins: 0,
+        averageRotation: 0,
+        favoriteBottle: 'beer',
+        maxRotation: 0,
+        bottleUsage: { beer: 0, whiskey: 0, ghty: 0 },
+        dailySpins: {},
+        lastPlayDate: null
+    };
+
+    // Аудио элементы
+    const spinSound = document.getElementById('spinSound');
+    const stopSound = document.getElementById('stopSound');
+    const clickSound = document.getElementById('clickSound');
+    const celebrationSound = document.getElementById('celebrationSound');
+
+    // Функции звуков
+    function playSpinSound() {
+        if (soundEnabled) {
+            spinSound.currentTime = 0;
+            spinSound.play().catch(e => console.log("Audio play error:", e));
+        }
+    }
+
+    function playStopSound() {
+        if (soundEnabled) {
+            stopSound.currentTime = 0;
+            stopSound.play().catch(e => console.log("Audio play error:", e));
+        }
+    }
+
+    function playClickSound() {
+        if (soundEnabled) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log("Audio play error:", e));
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        const soundIcon = document.getElementById('soundIcon');
+        if (soundEnabled) {
+            soundIcon.textContent = '🔊';
+            soundIcon.parentElement.classList.remove('sound-muted');
+            playClickSound();
+        } else {
+            soundIcon.textContent = '🔇';
+            soundIcon.parentElement.classList.add('sound-muted');
+        }
+    }
+
+    // Функции статистики
+    function updateStats(rotation, bottleType) {
+        const today = new Date().toDateString();
+        
+        stats.totalSpins++;
+        stats.averageRotation = (stats.averageRotation * (stats.totalSpins - 1) + rotation) / stats.totalSpins;
+        
+        if (rotation > stats.maxRotation) {
+            stats.maxRotation = rotation;
+        }
+        
+        if (stats.bottleUsage[bottleType] !== undefined) {
+            stats.bottleUsage[bottleType]++;
+        }
+        
+        let maxUsage = 0;
+        let favorite = 'beer';
+        for (const bottle in stats.bottleUsage) {
+            if (stats.bottleUsage[bottle] > maxUsage) {
+                maxUsage = stats.bottleUsage[bottle];
+                favorite = bottle;
+            }
+        }
+        stats.favoriteBottle = favorite;
+        
+        if (!stats.dailySpins[today]) {
+            stats.dailySpins[today] = 0;
+        }
+        stats.dailySpins[today]++;
+        stats.lastPlayDate = today;
+        
+        localStorage.setItem('bottleStats', JSON.stringify(stats));
+        checkAchievements(rotation);
+    }
+
+    function getTodaySpins() {
+        const today = new Date().toDateString();
+        return stats.dailySpins[today] || 0;
+    }
+
+    function renderStats() {
+        document.getElementById('totalSpins').textContent = stats.totalSpins;
+        document.getElementById('averageRotation').textContent = Math.round(stats.averageRotation) + '°';
+        document.getElementById('favoriteBottle').textContent = getBottleName(stats.favoriteBottle);
+        document.getElementById('todaySpins').textContent = getTodaySpins();
+        document.getElementById('maxRotation').textContent = Math.round(stats.maxRotation) + '°';
+    }
+
+    function getBottleName(bottleType) {
+        const names = {
+            'beer': 'Пиво',
+            'whiskey': 'Виски', 
+            'ghty': 'Особая'
+        };
+        return names[bottleType] || bottleType;
+    }
+
+    function resetStats() {
+        if (confirm('Вы уверены, что хотите сбросить всю статистику?')) {
+            localStorage.removeItem('bottleStats');
+            Object.assign(stats, {
+                totalSpins: 0,
+                averageRotation: 0,
+                favoriteBottle: 'beer',
+                maxRotation: 0,
+                bottleUsage: { beer: 0, whiskey: 0, ghty: 0 },
+                dailySpins: {},
+                lastPlayDate: null
+            });
+            renderStats();
+            playClickSound();
+        }
+    }
+
+    function checkAchievements(rotation) {
+        if (stats.totalSpins === 10) {
+            showCelebration('🎉 10 вращений!');
+        } else if (stats.totalSpins === 50) {
+            showCelebration('🏆 50 вращений!');
+        } else if (stats.totalSpins === 100) {
+            showCelebration('👑 100 вращений!');
+        }
+        
+        if (rotation > 3000 && rotation > stats.maxRotation) {
+            showCelebration('⚡ Рекорд угла!');
+        }
+        
+        if (getTodaySpins() === 10) {
+            showCelebration('🔥 10 за день!');
+        }
+    }
+
+    function showCelebration(text) {
+        if (soundEnabled) {
+            celebrationSound.currentTime = 0;
+            celebrationSound.play().catch(e => console.log("Celebration sound error:", e));
+        }
+        
+        const celebration = document.createElement('div');
+        celebration.className = 'celebration-effect';
+        celebration.textContent = text;
+        document.body.appendChild(celebration);
+        
+        createParticles(30, true);
+        
+        setTimeout(() => {
+            celebration.remove();
+        }, 2000);
+    }
+
+    // Функции частиц
+    function createParticles(count = 20, isCelebration = false) {
+        const container = document.getElementById('particlesContainer');
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        const emojis = ['🎉', '✨', '⭐', '🌟', '💫', '🔥', '💥', '🎊'];
+        
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            
+            if (isCelebration && Math.random() > 0.5) {
+                particle.className = 'particle emoji';
+                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                particle.style.fontSize = (Math.random() * 16 + 12) + 'px';
+            } else {
+                particle.className = 'particle';
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 100 + Math.random() * 200;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            
+            particle.style.setProperty('--tx', tx + 'px');
+            particle.style.setProperty('--ty', ty + 'px');
+            
+            particle.style.animationDelay = (Math.random() * 0.5) + 's';
+            particle.style.animationDuration = (0.8 + Math.random() * 0.7) + 's';
+            
+            container.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 2000);
+        }
+    }
+
+    // Управление игроками
+    function showPlayersModal() {
+        playClickSound();
+        document.getElementById('playersModal').style.display = 'block';
+        loadPlayers();
+        document.getElementById('playerInput').focus();
+    }
+
+    function closePlayersModal() {
+        playClickSound();
+        document.getElementById('playersModal').style.display = 'none';
+    }
+
+    function addPlayer() {
+        const input = document.getElementById('playerInput');
+        const name = input.value.trim();
+        
+        if (name && players.length < 12) {
+            players.push(name);
+            input.value = '';
+            savePlayers();
+            renderPlayersList();
+            playClickSound();
+        } else if (players.length >= 12) {
+            alert('Максимум 12 игроков!');
+        }
+    }
+
+    function removePlayer(index) {
+        playClickSound();
+        players.splice(index, 1);
+        savePlayers();
+        renderPlayersList();
+    }
+
+    function renderPlayersList() {
+        const list = document.getElementById('playersList');
+        list.innerHTML = '';
+        
+        players.forEach((player, index) => {
+            const playerItem = document.createElement('div');
+            playerItem.className = 'player-item';
+            playerItem.innerHTML = `
+                <span class="player-name">${player}</span>
+                <button class="remove-player" onclick="removePlayer(${index})">×</button>
+            `;
+            list.appendChild(playerItem);
+        });
+        
+        if (players.length === 0) {
+            list.innerHTML = '<div style="text-align: center; color: var(--text-color); opacity: 0.7;">Добавьте игроков для начала игры</div>';
+        }
+    }
+
+    function savePlayers() {
+        localStorage.setItem('bottlePlayers', JSON.stringify(players));
+    }
+
+    function loadPlayers() {
+        const saved = localStorage.getItem('bottlePlayers');
+        if (saved) {
+            players = JSON.parse(saved);
+            renderPlayersList();
+        }
+    }
+
+    function startGame() {
+        if (players.length < 2) {
+            alert('Добавьте хотя бы 2 игроков!');
+            return;
+        }
+        
+        playClickSound();
+        closePlayersModal();
+        currentPlayerIndex = 0;
+        updateCurrentPlayerDisplay();
+        
+        document.getElementById('currentPlayerDisplay').textContent = 'Игра началась! Крутите бутылку!';
+        setTimeout(() => {
+            updateCurrentPlayerDisplay();
+        }, 2000);
+    }
+
+    function updateCurrentPlayerDisplay() {
+        const display = document.getElementById('currentPlayerDisplay');
+        if (players.length > 0) {
+            display.textContent = `Сейчас: ${players[currentPlayerIndex]}`;
+        } else {
+            display.textContent = 'Нажмите "Игроки" для начала';
+        }
+    }
+
+    function getNextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        return players[currentPlayerIndex];
+    }
+
+    // Модальное окно статистики
+    function showStatsModal() {
+        playClickSound();
+        renderStats();
+        document.getElementById('statsModal').style.display = 'block';
+    }
+
+    function closeStatsModal() {
+        playClickSound();
+        document.getElementById('statsModal').style.display = 'none';
+    }
+
+    // Обработка Enter в поле ввода
+    document.getElementById('playerInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addPlayer();
+        }
+    });
+
+    // Закрытие модальных окон при клике вне их
+    window.onclick = function(event) {
+        const playersModal = document.getElementById('playersModal');
+        const statsModal = document.getElementById('statsModal');
+        
+        if (event.target === playersModal) {
+            closePlayersModal();
+        }
+        if (event.target === statsModal) {
+            closeStatsModal();
+        }
+        
+        if (!event.target.closest('.bottle-selector') && 
+            !event.target.closest('.dropdown-content') &&
+            !event.target.closest('.theme-toggle') &&
+            !event.target.closest('.fullscreen-toggle') &&
+            !event.target.closest('.players-selector') &&
+            !event.target.closest('.stats-selector')) {
+            
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    // Остальные функции
+    function getSavedTheme() {
+        return localStorage.getItem('theme') || 'light-theme';
+    }
+
+    function saveTheme(theme) {
+        localStorage.setItem('theme', theme);
+    }
+
+    function applyTheme(theme) {
+        document.body.className = 'background ' + theme;
+        updateThemeIcon(theme);
+    }
+
+    function updateThemeIcon(theme) {
+        const themeIcon = document.querySelector('.theme-icon');
+        themeIcon.textContent = theme === 'dark-theme' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+        playClickSound();
+        const currentTheme = document.body.classList.contains('dark-theme') ? 'dark-theme' : 'light-theme';
+        const newTheme = currentTheme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+        
+        document.body.classList.add('theme-transition');
+        applyTheme(newTheme);
+        saveTheme(newTheme);
+        
+        setTimeout(() => {
+            document.body.classList.remove('theme-transition');
+        }, 300);
+        
+        if(spinning > 0){
+            stopSpinning = 1;
+        }
+    }
 
     function toggleFullScreen() {
-    var doc = window.document;
-    var docEl = doc.documentElement;
+        playClickSound();
+        var doc = window.document;
+        var docEl = doc.documentElement;
 
-    var requestFullScreen =
-      docEl.requestFullscreen ||
-      docEl.mozRequestFullScreen ||
-      docEl.webkitRequestFullScreen ||
-      docEl.msRequestFullscreen;
-    var cancelFullScreen =
-      doc.exitFullscreen ||
-      doc.mozCancelFullScreen ||
-      doc.webkitExitFullscreen ||
-      doc.msExitFullscreen;
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
-    if (
-      !doc.fullscreenElement &&
-      !doc.mozFullScreenElement &&
-      !doc.webkitFullscreenElement &&
-      !doc.msFullscreenElement
-    ) {
-      requestFullScreen.call(docEl);
-    } else {
-      cancelFullScreen.call(doc);
-    }
-  }
-
-  function delay(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-  }
-
-  var spinning = 0;
-  var stopSpinning = 0;
-
-  async function turnBottle(){
-    spinning ++;
-    console.log("spinning:" + spinning);
-    if ( typeof turnBottle.winkelPre == 'undefined' ){
-      turnBottle.winkelPre = 0;
-    }
-    else{
-      turnBottle.winkelPre = turnBottle.winkel;
-    }
-    turnBottle.winkel = Math.random() * 360;
-    let winkelStr = turnBottle.winkel.toString() + 'deg';
-    let winkelStepped = turnBottle.winkel;
-
-    let i = 1;
-    let loops = 500;
-    while (winkelStepped <= turnBottle.winkel || i<loops && spinning==1) {
-      let winkelNextStr = winkelStepped.toString() + 'deg';
-      document.getElementsByClassName("flasche")[0].style.cssText =  'transform: rotate('+winkelNextStr+');';
-      winkelStepped = winkelStepped + (loops-i)/i;
-      i++;
-      await delay(10);
-      if(stopSpinning==1){
-        stopSpinning=0;
-        break;
-      }
-    }
-    stopSpinning = 0;
-    spinning--;
-    console.log("spinning:" + spinning);
-    console.log("i:" + i);
-
-  }
-
-  function myMenu() {
-    document.getElementById("dropDownContent").classList.toggle("show");
-  }
-
-  // Close the dropdown menu if the user clicks outside of it
-  window.onclick = function(event) {
-    console.log("onClick...");
-    if (!event.target.matches('.dropdown-button')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      console.log("daneben");
-      for (i = 0; i < dropdowns.length; i++) {
-        console.log("daneben i:" + i);
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        } else {
+            cancelFullScreen.call(doc);
         }
-      }
     }
-  }
 
-  function play() {
-    console.log("play..");
-    document.querySelector(".flasche").style.cssText =  'transform: rotate(0deg);';
-    document.querySelector(".flasche").className = "flasche";
-    window.requestAnimationFrame(function(time) {
-      window.requestAnimationFrame(function(time) {
-        document.querySelector(".flasche").className = "flasche flascheAnime";
-      });
-    });
-  }
+    function delay(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
 
-  function switchBottle() {
-    console.log("switchBottle..");
-    if(spinning>0){
-      stopSpinning = 1;
-    }
-    if (event.target.matches('.dropDownFlasche')) {
-      const element = document.getElementById('flasche')
-      element.src=event.target.src;
-      play();
-    }
-    document.getElementById("dropDownContent").classList.toggle("show");
-  }
+    async function turnBottle(){
+        if (players.length < 2) {
+            alert('Добавьте игроков через меню "Игроки"!');
+            return;
+        }
+        
+        playClickSound();
+        playSpinSound();
+        createParticles(15);
+        
+        spinning ++;
+        if ( typeof turnBottle.winkelPre == 'undefined' ){
+          turnBottle.winkelPre = 0;
+        } else {
+          turnBottle.winkelPre = turnBottle.winkel;
+        }
+        
+        turnBottle.winkel = Math.random() * 3600 + 1800;
+        let winkelStepped = turnBottle.winkel;
 
-  function switchWallPaper() {
-    console.log("switchWP..");
-    if(spinning>0){
-      stopSpinning = 1;
+        let i = 1;
+        let loops = 500;
+        while (winkelStepped <= turnBottle.winkel || i<loops && spinning==1) {
+          let winkelNextStr = winkelStepped.toString() + 'deg';
+          document.getElementsByClassName("flasche")[0].style.cssText =  'transform: rotate('+winkelNextStr+');';
+          winkelStepped = winkelStepped + (loops-i)/i;
+          i++;
+          await delay(10);
+          if(stopSpinning==1){
+            stopSpinning=0;
+            break;
+          }
+        }
+        
+        playStopSound();
+        createParticles(25);
+        
+        updateStats(turnBottle.winkel, currentBottle);
+        
+        stopSpinning = 0;
+        spinning--;
+        
+        const selectedPlayer = getNextPlayer();
+        document.getElementById('currentPlayerDisplay').textContent = `Выбран: ${selectedPlayer}!`;
     }
-    if (event.target.matches('.dropDownWallPaper')) {
-      console.log("matchWP..");
-      console.log("src:" + event.target.src);
-      document.querySelector(".background").style.cssText ='background-image: url('+ event.target.src + ');';
-      play();
-    }
-    document.getElementById("dropDownContent").classList.toggle("show");
-  }
 
+    function myMenu() {
+        playClickSound();
+        document.getElementById("dropDownContent").classList.toggle("show");
+    }
+
+    function play() {
+        document.querySelector(".flasche").style.cssText =  'transform: rotate(0deg);';
+        document.querySelector(".flasche").className = "flasche";
+        window.requestAnimationFrame(function(time) {
+            window.requestAnimationFrame(function(time) {
+                document.querySelector(".flasche").className = "flasche flascheAnime";
+            });
+        });
+    }
+
+    function switchBottle() {
+        playClickSound();
+        if(spinning>0){
+            stopSpinning = 1;
+        }
+        if (event.target.matches('.dropDownFlasche')) {
+            const element = document.getElementById('flasche')
+            element.src=event.target.src;
+            
+            // Определяем тип бутылки для статистики
+            if (event.target.src.includes('beer')) currentBottle = 'beer';
+            else if (event.target.src.includes('whiskey')) currentBottle = 'whiskey';
+            else if (event.target.src.includes('ghty')) currentBottle = 'ghty';
+            
+            play();
+        }
+        document.getElementById("dropDownContent").classList.remove("show");
+    }
+
+    // Инициализация при загрузке
+    window.addEventListener('load', function() {
+        const savedTheme = getSavedTheme();
+        applyTheme(savedTheme);
+        loadPlayers();
+        updateCurrentPlayerDisplay();
+        
+        setTimeout(function() { 
+            window.scrollTo(0, 1); 
+        }, 1);
+    }, false);
 </script>
 </body></html>
